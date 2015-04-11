@@ -94,8 +94,8 @@ public class FacesConfigMojo extends BaseFacesMojo{
 	}
 
 	private void writeFacesConfigBegin(BufferedWriter writer, List components) throws IOException {
-		String version = "2.0";
-		String xsdVersion = "2_0";
+		String version = isJSF2() ? "2.0" : "1.2";
+		String xsdVersion = isJSF2() ? "2_0" : "1_2";
 		
 		writer.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
 		writer.write("<faces-config version=\"" + version + "\" xmlns=\"http://java.sun.com/xml/ns/javaee\"\n");
@@ -142,18 +142,6 @@ public class FacesConfigMojo extends BaseFacesMojo{
             writer.write("\t\t<render-kit-id>" + renderKitId + "</render-kit-id>\n");
             writer.write("\t\t<render-kit-class>" + renderKitClass + "</render-kit-class>\n");
         }
-                		
-		for (Iterator iterator = components.iterator(); iterator.hasNext();) {
-			Component component = (Component) iterator.next();
-			if(component.getRendererType() == null)
-				continue;
-			
-			writer.write("\t\t<renderer>\n");
-			writer.write("\t\t\t<component-family>" + component.getComponentFamily() + "</component-family>\n");
-			writer.write("\t\t\t<renderer-type>" + component.getRendererType() + "</renderer-type>\n");
-			writer.write("\t\t\t<renderer-class>" + component.getRendererClass() + "</renderer-class>\n");
-			writer.write("\t\t</renderer>\n");
-		}
         
         //Standard Renderers
         try {
@@ -168,6 +156,18 @@ public class FacesConfigMojo extends BaseFacesMojo{
 			}
 		}catch(FileNotFoundException fileNotFoundException) {
 			return;
+		}
+        		
+		for (Iterator iterator = components.iterator(); iterator.hasNext();) {
+			Component component = (Component) iterator.next();
+			if(component.getRendererType() == null)
+				continue;
+			
+			writer.write("\t\t<renderer>\n");
+			writer.write("\t\t\t<component-family>" + component.getComponentFamily() + "</component-family>\n");
+			writer.write("\t\t\t<renderer-type>" + component.getRendererType() + "</renderer-type>\n");
+			writer.write("\t\t\t<renderer-class>" + component.getRendererClass() + "</renderer-class>\n");
+			writer.write("\t\t</renderer>\n");
 		}
 
 		writer.write("\t</render-kit>\n\n");
