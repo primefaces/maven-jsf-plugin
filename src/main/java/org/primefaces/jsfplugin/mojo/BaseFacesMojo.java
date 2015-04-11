@@ -27,7 +27,6 @@ import org.apache.maven.project.MavenProject;
 
 import org.primefaces.jsfplugin.digester.Attribute;
 import org.primefaces.jsfplugin.digester.Component;
-import org.primefaces.jsfplugin.digester.Interface;
 import org.primefaces.jsfplugin.digester.Resource;
 
 /**
@@ -55,16 +54,11 @@ public abstract class BaseFacesMojo extends AbstractMojo{
 	 * @parameter
 	 */
 	protected String templatesDir;
-	    
-    /**
-	 * @parameter
-	 */
-	protected String license;
 	
 	protected String[] uicomponentAttributes = new String[]{"id","rendered","binding"};
 	
 	protected String[] specialAttributes = new String[]{"value","converter","validator","valueChangeListener","immediate","required","action","actionListener"};
-    
+		
 	protected File[] getResources() {
 		return new File(project.getBasedir() + File.separator + componentConfigsDir).listFiles();
 	}
@@ -83,26 +77,23 @@ public abstract class BaseFacesMojo extends AbstractMojo{
 		digester.addBeanPropertySetter("component/rendererType", "rendererType");
 		digester.addBeanPropertySetter("component/rendererClass", "rendererClass");
 		digester.addBeanPropertySetter("component/parent", "parent");
-        digester.addBeanPropertySetter("component/description", "description");
+		digester.addBeanPropertySetter("component/ajaxComponent", "ajaxComponent");
 		
 		digester.addObjectCreate("component/attributes/attribute", Attribute.class);
 		digester.addBeanPropertySetter("component/attributes/attribute/name","name");
 		digester.addBeanPropertySetter("component/attributes/attribute/required","required");
 		digester.addBeanPropertySetter("component/attributes/attribute/type","type");
+		digester.addBeanPropertySetter("component/attributes/attribute/description","description");
 		digester.addBeanPropertySetter("component/attributes/attribute/defaultValue","defaultValue");
 		digester.addBeanPropertySetter("component/attributes/attribute/ignoreInComponent","ignoreInComponent");
 		digester.addBeanPropertySetter("component/attributes/attribute/method-signature","methodSignature");
 		digester.addBeanPropertySetter("component/attributes/attribute/literal","literal");
-        digester.addBeanPropertySetter("component/attributes/attribute/description","description");
 		digester.addSetNext("component/attributes/attribute", "addAttribute");
 		
 		digester.addObjectCreate("component/resources/resource", Resource.class);
 		digester.addBeanPropertySetter("component/resources/resource/name","name");
-		digester.addSetNext("component/resources/resource", "addResource");
 		
-		digester.addObjectCreate("component/interfaces/interface", Interface.class);
-		digester.addBeanPropertySetter("component/interfaces/interface/name","name");
-		digester.addSetNext("component/interfaces/interface", "addInterface");
+		digester.addSetNext("component/resources/resource", "addResource");
 		
 		return digester;
 	}
@@ -133,8 +124,8 @@ public abstract class BaseFacesMojo extends AbstractMojo{
 	protected String getCreateOutputDirectory() {
 		
 		String outputPath = project.getBuild().getDirectory()
-				+ File.separator + "generated-sources"
-                                + File.separator + "maven-jsf-plugin" + File.separator;
+				+ File.separator + "maven-jsf-plugin" + File.separator + "main"
+				+ File.separator + "java" + File.separator;
 
 		File componentsDirectory = new File(outputPath);
 		
@@ -160,31 +151,8 @@ public abstract class BaseFacesMojo extends AbstractMojo{
 	}
 	
 	protected String getLicense() {
-        boolean elite = (license != null && license.equals("elite"));
-        String license = null;
-        
-        if(elite) {
-            license = "/*\n * Generated, Do Not Modify\n */\n" +
-                        "/*\n"+
-						" * Copyright 2009-2013 PrimeTek.\n" +
-						" *\n" + 
-						" * Licensed under PrimeFaces Commercial License, Version 1.0 (the \"License\");\n"+
-						" * you may not use this file except in compliance with the License.\n" +
-						" * You may obtain a copy of the License at\n" +
- 						" *\n" +
- 						" * http://www.primefaces.org/elite/license.xhtml\n" +
- 						" *\n" + 
- 						" * Unless required by applicable law or agreed to in writing, software\n" +
- 						" * distributed under the License is distributed on an \"AS IS\" BASIS,\n" +
- 						" * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n" +
- 						" * See the License for the specific language governing permissions and\n" + 
- 						" * limitations under the License.\n" +
- 						" */\n";
-        }
-        else {
-            license = "/*\n * Generated, Do Not Modify\n */\n" +
-                        "/*\n"+
-						" * Copyright 2009-2013 PrimeTek.\n" +
+		String license = "/*\n"+ 
+						" * Copyright 2009 Prime Technology.\n" +
 						" *\n" + 
 						" * Licensed under the Apache License, Version 2.0 (the \"License\");\n"+
 						" * you may not use this file except in compliance with the License.\n" +
@@ -198,13 +166,15 @@ public abstract class BaseFacesMojo extends AbstractMojo{
  						" * See the License for the specific language governing permissions and\n" + 
  						" * limitations under the License.\n" +
  						" */\n";
-        }
-        
 		return license;
 	}
 	
 	protected void writeLicense(BufferedWriter writer) throws IOException{
 		writer.write(getLicense());
+	}
+	
+	protected void writeFacesContextGetter(BufferedWriter writer) throws IOException {
+		writer.write("\n\tprotected FacesContext getFacesContext() {\n\t\treturn FacesContext.getCurrentInstance();\n\t}\n");
 	}
 	
 	protected void writeResourceHolderGetter(BufferedWriter writer) throws IOException{
