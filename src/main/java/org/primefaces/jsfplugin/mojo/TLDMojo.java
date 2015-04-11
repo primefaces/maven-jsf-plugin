@@ -97,7 +97,9 @@ public class TLDMojo extends BaseFacesMojo {
 					Attribute attribute = (Attribute) iterator2.next();
 					
 					writer.write("\t\t<attribute>\n");
-                    writer.write("\t\t\t<description></description>\n");
+					if(attribute.getDescription() != null) {
+						writer.write("\t\t\t<description><![CDATA[" + attribute.getDescription() + "]]></description>\n");
+					}
 					writer.write("\t\t\t<name>" + attribute.getName() + "</name>\n");
 					writer.write("\t\t\t<required>" + attribute.isRequired() + "</required>\n");
 

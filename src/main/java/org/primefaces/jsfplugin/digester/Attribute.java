@@ -22,11 +22,11 @@ public class Attribute {
 	private String name;
 	private boolean required = false;
 	private String type;
+	private String description;
 	private String defaultValue;
 	private boolean ignoreInComponent = false;
 	private String methodSignature;
 	private boolean literal;
-    private String description;
 	
 	public String getName() {
 		return name;
@@ -40,6 +40,13 @@ public class Attribute {
 	}
 	public void setRequired(boolean required) {
 		this.required = required;
+	}
+	
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
 	}
 	
 	public String getType() {
@@ -82,15 +89,7 @@ public class Attribute {
 	public void setLiteral(boolean literal) {
 		this.literal = literal;
 	}
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
- 
+	
 	/**
 	 * Gives the short name of the attribute
 	 * e.g. java.lang.String will return String
