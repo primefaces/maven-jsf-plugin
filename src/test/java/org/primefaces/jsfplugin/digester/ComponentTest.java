@@ -21,7 +21,7 @@ public class ComponentTest extends TestCase {
 
 	public void testGetShortName() {
 		Component component = new Component();
-		component.setComponentClass("org.primefaces.component.slider.Slider");
+		component.setComponentClass("net.sf.yui4jsf.component.Slider");
 		assertEquals("Slider", component.getComponentShortName());
 	}
 	
@@ -33,13 +33,13 @@ public class ComponentTest extends TestCase {
 	
 	public void testGetParentPackagePath() {
 		Component component = new Component();
-		component.setTagClass("org.primefaces.component.tabview.TabTag");
+		component.setTagClass("net.sf.yui4jsf.component.tabview.Tab");
 		assertEquals("tabview", component.getParentPackagePath());
 	}
 	
 	public void testGetPackage() {
 		Component component = new Component();
-		component.setTagClass("org.primefaces.component.tabview.TabTag");
-		assertEquals("org.primefaces.component.tabview", component.getPackage());
+		component.setTagClass("net.sf.yui4jsf.component.tabview.Tab");
+		assertEquals("net.sf.yui4jsf.component.tabview", component.getPackage());
 	}
 }
