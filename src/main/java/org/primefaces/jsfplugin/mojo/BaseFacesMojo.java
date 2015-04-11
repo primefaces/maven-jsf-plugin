@@ -55,7 +55,13 @@ public abstract class BaseFacesMojo extends AbstractMojo{
 	 * @parameter
 	 */
 	protected String templatesDir;
-	    
+	
+	/**
+	 * @parameter
+	 * @required
+	 */
+	protected String jsfVersion;
+    
     /**
 	 * @parameter
 	 */
@@ -225,5 +231,9 @@ public abstract class BaseFacesMojo extends AbstractMojo{
 			return true;
 		else
 			return false;		
+	}
+	
+	protected boolean isJSF2() {
+		return this.jsfVersion.equalsIgnoreCase("2");
 	}
  }
