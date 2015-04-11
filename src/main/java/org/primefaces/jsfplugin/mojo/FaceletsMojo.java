@@ -15,11 +15,8 @@
  */
 package org.primefaces.jsfplugin.mojo;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Iterator;
@@ -27,7 +24,6 @@ import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.primefaces.jsfplugin.digester.Attribute;
 
 import org.primefaces.jsfplugin.digester.Component;
 
@@ -36,23 +32,6 @@ import org.primefaces.jsfplugin.digester.Component;
  */
 public class FaceletsMojo extends BaseFacesMojo{
 
-	/**
-	 * @parameter
-	 */
-	protected String standardFaceletsTaglib;
-	
-	/**
-	 * @parameter
-	 * @required
-	 */
-	protected String uri;
-	
-	/**
-	 * @parameter
-	 * @required
-	 */
-	protected String shortName;
-	
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		getLog().info("Generating facelets-taglib");
 		
@@ -69,7 +48,7 @@ public class FaceletsMojo extends BaseFacesMojo{
 		FileWriter fileWriter;
 		BufferedWriter writer;
 		String outputPath = project.getBuild().getOutputDirectory() + File.separator + "META-INF";
-		String outputFile =  "primefaces-" + shortName + ".taglib.xml";
+		String outputFile =  "primefaces-ui.taglib.xml";
 		
 		File outputDirectory = new File(outputPath);
 		if(!outputDirectory.exists())
@@ -78,27 +57,18 @@ public class FaceletsMojo extends BaseFacesMojo{
 		fileWriter = new FileWriter(outputPath + File.separator + outputFile);	
 		writer = new BufferedWriter(fileWriter);
 		
-		writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+		writer.write("<?xml version=\"1.0\"?>\n");
+		writer.write("<!DOCTYPE facelet-taglib PUBLIC \"-//Sun Microsystems, Inc.//DTD Facelet\n");
+		writer.write("Taglib 1.0//EN\" \"facelet-taglib_1_0.dtd\">\n");
+		writer.write("<facelet-taglib>\n\n");
+		writer.write("\t<namespace>http://primefaces.prime.com.tr/ui</namespace>\n\n");
 		
-		writeXSD(writer);
-		
-		writer.write("\t<namespace>" + uri + "</namespace>\n\n");
-		
-		if(standardFaceletsTaglib != null) {
-			writeStandardFaceletsTaglib(writer);
-		}
-		
-		for(Iterator<Component> iterator = components.iterator(); iterator.hasNext();) {
-			Component component = iterator.next();
+		for (Iterator iterator = components.iterator(); iterator.hasNext();) {
+			Component component = (Component) iterator.next();
 			writer.write("\t<tag>\n");
 			writer.write("\t\t<tag-name>");
 			writer.write(component.getTag());
 			writer.write("</tag-name>\n");
-            writer.write("\t\t<description><![CDATA[");
-            if(component.getDescription() != null) {
-            	writer.write(component.getDescription());
-            }
-			writer.write("]]></description>\n");
 			writer.write("\t\t<component>\n");
 			writer.write("\t\t\t<component-type>");
 			writer.write(component.getComponentType());
@@ -115,37 +85,7 @@ public class FaceletsMojo extends BaseFacesMojo{
 				writer.write(component.getComponentHandlerClass());
 				writer.write("</handler-class>\n");
 			}
-
 			writer.write("\t\t</component>\n");
-
-            Attribute attribute = null;
-            for(Iterator<Attribute> attr = component.getAttributes().iterator(); attr.hasNext();) {
-                attribute = attr.next();
-
-                writer.write("\t\t<attribute>\n");
-
-                writer.write("\t\t\t<description><![CDATA[");
-                if(attribute.getDescription() != null) {
-                    writer.write(attribute.getDescription());
-                }
-                writer.write("]]></description>\n");
-
-                writer.write("\t\t\t<name>");
-                writer.write(attribute.getName());
-                writer.write("</name>\n");
-
-                writer.write("\t\t\t<required>");
-                writer.write(String.valueOf(attribute.isRequired()));
-                writer.write("</required>\n");
-
-                writer.write("\t\t\t<type>");
-                writer.write(attribute.getType());
-                writer.write("</type>\n");
-
-                writer.write("\t\t</attribute>\n");
-            }
-            
-
 			writer.write("\t</tag>\n");
 		}
 		
@@ -153,28 +93,5 @@ public class FaceletsMojo extends BaseFacesMojo{
 		
 		writer.close();
 		fileWriter.close();
-	}
-
-	private void writeXSD(BufferedWriter writer) throws IOException {
-		writer.write("<facelet-taglib xmlns=\"http://java.sun.com/xml/ns/javaee\"\n");
-		writer.write("\t\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
-		writer.write("\t\txsi:schemaLocation=\"http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facelettaglibrary_2_0.xsd\"\n");
-		writer.write("\t\tversion=\"2.0\">\n");
-	}
-	
-	private void writeStandardFaceletsTaglib(BufferedWriter writer) throws IOException{
-		try {
-			File template = new File(project.getBasedir() + File.separator + standardFaceletsTaglib);
-			FileReader fileReader = new FileReader(template);
-			BufferedReader reader = new BufferedReader(fileReader);
-			String line = null;
-			
-			while((line = reader.readLine()) != null) {
-				writer.write(line);
-				writer.write("\n");
-			}
-		}catch(FileNotFoundException fileNotFoundException) {
-			return;
-		}
 	}
 }
