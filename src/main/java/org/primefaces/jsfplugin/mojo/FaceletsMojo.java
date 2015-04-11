@@ -80,7 +80,10 @@ public class FaceletsMojo extends BaseFacesMojo{
 		
 		writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 		
-		writeXSD(writer);
+		if(isJSF2())
+			writeXSD(writer);
+		else
+			writeDTD(writer);
 		
 		writer.write("\t<namespace>" + uri + "</namespace>\n\n");
 		
@@ -94,11 +97,6 @@ public class FaceletsMojo extends BaseFacesMojo{
 			writer.write("\t\t<tag-name>");
 			writer.write(component.getTag());
 			writer.write("</tag-name>\n");
-            writer.write("\t\t<description><![CDATA[");
-            if(component.getDescription() != null) {
-            	writer.write(component.getDescription());
-            }
-			writer.write("]]></description>\n");
 			writer.write("\t\t<component>\n");
 			writer.write("\t\t\t<component-type>");
 			writer.write(component.getComponentType());
@@ -124,11 +122,9 @@ public class FaceletsMojo extends BaseFacesMojo{
 
                 writer.write("\t\t<attribute>\n");
 
-                writer.write("\t\t\t<description><![CDATA[");
-                if(attribute.getDescription() != null) {
-                    writer.write(attribute.getDescription());
-                }
-                writer.write("]]></description>\n");
+                writer.write("\t\t\t<description>");
+                writer.write(attribute.getDescription());
+                writer.write("</description>\n");
 
                 writer.write("\t\t\t<name>");
                 writer.write(attribute.getName());
@@ -154,7 +150,15 @@ public class FaceletsMojo extends BaseFacesMojo{
 		writer.close();
 		fileWriter.close();
 	}
-
+	
+	private void writeDTD(BufferedWriter writer) throws IOException {
+		writer.write("<!DOCTYPE facelet-taglib PUBLIC\n");
+		writer.write("  \"-//Sun Microsystems, Inc.//DTD Facelet Taglib 1.0//EN\"\n");
+		writer.write("  \"http://java.sun.com/dtd/facelet-taglib_1_0.dtd\">\n\n");
+		
+		writer.write("<facelet-taglib>\n");
+	}
+	
 	private void writeXSD(BufferedWriter writer) throws IOException {
 		writer.write("<facelet-taglib xmlns=\"http://java.sun.com/xml/ns/javaee\"\n");
 		writer.write("\t\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
