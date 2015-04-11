@@ -19,11 +19,9 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.Iterator;
 import java.util.List;
 
@@ -65,6 +63,7 @@ public class TLDMojo extends BaseFacesMojo {
 	}
 	
 	private void writeTLD(List components) {
+		FileWriter fileWriter;
 		BufferedWriter writer;
 		String outputPath = project.getBuild().getOutputDirectory() + File.separator + "META-INF";
 		String outputFile =  "primefaces-" + shortName + ".tld";
@@ -73,8 +72,8 @@ public class TLDMojo extends BaseFacesMojo {
 			File tldDirectory = new File(outputPath);
 			tldDirectory.mkdirs();
 			
-			OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(outputPath + File.separator + outputFile),"UTF-8");
-			writer = new BufferedWriter(out);
+			fileWriter = new FileWriter(outputPath + File.separator + outputFile);	
+			writer = new BufferedWriter(fileWriter);
 			
 			writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 			writer.write("<taglib xsi:schemaLocation=\"http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd\" xmlns=\"http://java.sun.com/xml/ns/javaee\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" version=\"2.1\">\n");
@@ -97,10 +96,11 @@ public class TLDMojo extends BaseFacesMojo {
 					Attribute attribute = (Attribute) iterator2.next();
 					
 					writer.write("\t\t<attribute>\n");
-                    writer.write("\t\t\t<description></description>\n");
 					writer.write("\t\t\t<name>" + attribute.getName() + "</name>\n");
 					writer.write("\t\t\t<required>" + attribute.isRequired() + "</required>\n");
-
+					if(attribute.getDescription() != null)
+						writer.write("\t\t\t<description><![CDATA[" + attribute.getDescription() + "]]></description>\n");
+					
 					if(attribute.isLiteral()) {
 						 writer.write("\t\t\t<rtexprvalue>false</rtexprvalue>\n");
 					} else {
