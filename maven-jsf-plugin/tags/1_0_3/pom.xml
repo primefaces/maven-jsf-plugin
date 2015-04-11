@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<groupId>org.primefaces</groupId>
+		<artifactId>primefaces-master</artifactId>
+		<version>1.0.1</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>maven-jsf-plugin</artifactId>
+	<packaging>maven-plugin</packaging>
+	<version>1.0.3</version>
+	<name>maven-jsf-plugin Maven Mojo</name>
+	<description>maven-jsf-plugin contains several goals that can be used to generate tlds, jsp tag sources, component sources, faces-config.xml and facelets-taglib file.</description>
+
+	<scm>
+		<connection>scm:svn:http://primefaces.googlecode.com/svn/maven/trunk/maven-jsf-plugin</connection>
+		<developerConnection>scm:svn:https://primefaces.googlecode.com/svn/maven/trunk/maven-jsf-plugin/</developerConnection>
+		<url>http://code.google.com/p/primefaces/source/browse/#svn/maven/trunk/maven-jsf-plugin</url>
+	</scm>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-plugin-api</artifactId>
+			<version>2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-project</artifactId>
+			<version>2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-digester</groupId>
+			<artifactId>commons-digester</artifactId>
+			<version>1.8</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+  			<artifactId>commons-lang</artifactId>
+  			<version>2.3</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.4</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	
+	<build>
+		<plugins>
+			<plugin>
+        		<groupId>org.apache.maven.plugins</groupId>
+        		<artifactId>maven-plugin-plugin</artifactId>
+        		<configuration>
+          			<goalPrefix>jsf</goalPrefix>
+        		</configuration>
+      		</plugin>
+		</plugins>
+	</build>
+
+	<repositories>
+   		<repository>
+			<id>prime-repo</id>
+			<name>Prime Technology Maven Repository</name>
+			<url>http://repository.prime.com.tr/</url>
+			<layout>default</layout>
+		</repository>
+	</repositories>
+	
+</project>
