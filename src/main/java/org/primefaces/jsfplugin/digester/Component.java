@@ -152,7 +152,7 @@ public class Component {
 	
 	/**
 	 * Gives the short name of the component
-	 * e.g. org.primefaces.component.Slider will return Slider
+	 * e.g. net.sf.yui4jsf.component.Slider will return Slider
 	 */
 	public String getComponentShortName() {
 		String[] list = componentClass.split("\\.");
@@ -170,7 +170,7 @@ public class Component {
 	
 	/**
 	 * Returns the parent package folder
-	 * e.g. org.primefaces.component.tabview.Tab will return "tabview"
+	 * e.g. net.sf.yui4jsf.component.tabview.Tab will return "tabview"
 	 */
 	public String getParentPackagePath() {
 		String[] list = getTagClass().split("\\.");
@@ -179,7 +179,7 @@ public class Component {
 	
 	/**
 	 * Returns the parent package folder
-	 * e.g. org.primefaces.component.tabview.Tab will return "org.primefaces.component.tabview"
+	 * e.g. net.sf.yui4jsf.component.tabview.Tab will return "net.sf.yui4jsf.component.tabview"
 	 */
 	public String getPackage() {
 		return StringUtils.substringBeforeLast(getTagClass(), ".");

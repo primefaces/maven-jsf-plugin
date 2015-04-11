@@ -105,7 +105,6 @@ public class ComponentMojo extends BaseFacesMojo {
         writer.write("import javax.faces.application.ResourceDependency;\n");
         writer.write("import java.util.List;\n");
         writer.write("import java.util.ArrayList;\n");
-        writer.write("import org.primefaces.util.ComponentUtils;\n");
 		
 		String templateImports = getTemplateImports(component);
 		
@@ -247,7 +246,65 @@ public class ComponentMojo extends BaseFacesMojo {
             writer.write("\t}\n\n");
 		}
 	}
-
+	
+	private void writeMethodExpressionAttribute(BufferedWriter writer, Attribute attribute) throws IOException {
+		writer.write("\tpublic javax.el.MethodExpression get" + attribute.getCapitalizedName() + "() {\n");
+		writer.write("\t\treturn this._" + attribute.getName() + ";\n");
+		writer.write("\t}\n\n");
+		
+		writer.write("\tpublic void set" + attribute.getCapitalizedName() + "(javax.el.MethodExpression _" + attribute.getName() + ") {\n");
+		writer.write("\t\tthis._" + attribute.getName() + " = _" + attribute.getName() + ";\n");
+		writer.write("\t}\n");
+	}
+	
+	private void writeSaveState(BufferedWriter writer, Component component) throws IOException {
+		//ignore id,rendered,binding  
+		int attributesToSave = FacesMojoUtils.getStateAllocationSize(component) + 1;
+		int attributeNo = 1;
+		
+		writer.write("\tpublic Object saveState(FacesContext context) {\n");
+		writer.write("\t\tObject values[] = new Object[" + attributesToSave + "];\n");
+		writer.write("\t\tvalues[0] = super.saveState(context);\n");
+		
+		for (Iterator attributeIterator = component.getAttributes().iterator(); attributeIterator.hasNext();) {
+			Attribute attribute = (Attribute) attributeIterator.next();
+			if(attribute.isIgnored())
+				continue;
+			
+			if(!isMethodBinding(attribute))
+				writer.write("\t\tvalues[" + attributeNo + "] = _" + attribute.getName() +";\n");
+			else
+				writer.write("\t\tvalues[" + attributeNo + "] = saveAttachedState(context, _" + attribute.getName() + ");\n");
+				
+			attributeNo++;
+		}
+		
+		writer.write("\t\treturn ((Object) values);\n");
+		writer.write("\t}\n");
+	}
+	
+	private void writeRestoreState(BufferedWriter writer, Component component) throws IOException {
+		int attributeNo = 1;
+		
+		writer.write("\tpublic void restoreState(FacesContext context, Object state) {\n");
+		writer.write("\t\tObject values[] = (Object[]) state;\n");
+		writer.write("\t\tsuper.restoreState(context, values[0]);\n");
+		
+		for (Iterator attributeIterator = component.getAttributes().iterator(); attributeIterator.hasNext();) {
+			Attribute attribute = (Attribute) attributeIterator.next();
+			if(attribute.isIgnored())
+				continue;
+			
+			if(!isMethodBinding(attribute))
+				writer.write("\t\t_" + attribute.getName() + " = (" + attribute.getType() + ") values[" + attributeNo + "];\n");
+			else
+				writer.write("\t\t_" + attribute.getName() + " = (MethodBinding) restoreAttachedState(context, values[" + attributeNo + "]);\n");
+				
+			attributeNo++;
+		}
+		writer.write("\t}\n");
+	}
+	
 	private void writePackage(BufferedWriter writer, Component component) throws IOException {
 		writer.write("package " + component.getPackage() + ";\n\n");
 	}
@@ -319,7 +376,13 @@ public class ComponentMojo extends BaseFacesMojo {
 
     protected void writeWidgetVarResolver(BufferedWriter writer) throws IOException {
         writer.write("\tpublic String resolveWidgetVar() {\n");
-        writer.write("\t\treturn ComponentUtils.resolveWidgetVar(getFacesContext(), this);\n");
+        writer.write("\t\tFacesContext context = getFacesContext();\n");
+        writer.write("\t\tString userWidgetVar = (String) getAttributes().get(\"widgetVar\");\n\n");
+        writer.write("\t\tif(userWidgetVar != null)\n");
+        writer.write("\t\t\treturn userWidgetVar;\n");
+        writer.write("\t\t");
+        writer.write(" else\n");
+        writer.write("\t\t\treturn \"widget_\" + getClientId(context).replaceAll(\"-|\" + UINamingContainer.getSeparatorChar(context), \"_\");\n");
         writer.write("\t}\n");
     }
 }
