@@ -20,13 +20,11 @@ import org.apache.commons.lang.StringUtils;
 public class Attribute {
 
 	private String name;
-	private boolean required = false;
+	private String required;;
 	private String type;
+	private String description;
 	private String defaultValue;
-	private boolean ignoreInComponent = false;
-	private String methodSignature;
-	private boolean literal;
-    private String description;
+	private String ignoreInComponent = "false";
 	
 	public String getName() {
 		return name;
@@ -35,11 +33,18 @@ public class Attribute {
 		this.name = name;
 	}
 	
-	public boolean isRequired() {
+	public String getRequired() {
 		return required;
 	}
-	public void setRequired(boolean required) {
+	public void setRequired(String required) {
 		this.required = required;
+	}
+	
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
 	}
 	
 	public String getType() {
@@ -62,35 +67,13 @@ public class Attribute {
 		this.defaultValue = defaultValue;
 	}
 	
-	public boolean isIgnoreInComponent() {
+	public String getIgnoreInComponent() {
 		return ignoreInComponent;
 	}
-	public void setIgnoreInComponent(boolean ignoreInComponent) {
+	public void setIgnoreInComponent(String ignoreInComponent) {
 		this.ignoreInComponent = ignoreInComponent;
 	}
 	
-	public String getMethodSignature() {
-		return methodSignature;
-	}
-	public void setMethodSignature(String methodSignature) {
-		this.methodSignature = methodSignature;
-	}
-	
-	public boolean isLiteral() {
-		return literal;
-	}
-	public void setLiteral(boolean literal) {
-		this.literal = literal;
-	}
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
- 
 	/**
 	 * Gives the short name of the attribute
 	 * e.g. java.lang.String will return String
@@ -109,10 +92,6 @@ public class Attribute {
 	}
 	
 	public boolean isIgnored() {
-		return ignoreInComponent;
-	}
-	
-	public boolean isDeferredValue() {
-		return getMethodSignature() == null && !isLiteral();
+		return Boolean.valueOf(ignoreInComponent).booleanValue();
 	}
 }
