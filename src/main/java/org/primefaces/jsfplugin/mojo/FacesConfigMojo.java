@@ -41,21 +41,6 @@ public class FacesConfigMojo extends BaseFacesMojo{
 	 * @parameter
 	 */
 	protected String standardFacesConfig;
-    
-    /**
-	 * @parameter
-	 */
-	protected String standardRenderersConfig;
-    
-    /**
-	 * @parameter
-	 */
-	protected String renderKitId;
-    
-    /**
-	 * @parameter
-	 */
-	protected String renderKitClass;
 	
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		getLog().info("Generating faces-config.xml");
@@ -94,8 +79,8 @@ public class FacesConfigMojo extends BaseFacesMojo{
 	}
 
 	private void writeFacesConfigBegin(BufferedWriter writer, List components) throws IOException {
-		String version = "2.0";
-		String xsdVersion = "2_0";
+		String version = isJSF2() ? "2.0" : "1.2";
+		String xsdVersion = isJSF2() ? "2_0" : "1_2";
 		
 		writer.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
 		writer.write("<faces-config version=\"" + version + "\" xmlns=\"http://java.sun.com/xml/ns/javaee\"\n");
@@ -137,12 +122,7 @@ public class FacesConfigMojo extends BaseFacesMojo{
 	
 	private void writeRenderers(BufferedWriter writer, List components) throws IOException{
 		writer.write("\t<render-kit>\n");
-        
-        if(renderKitId != null) {
-            writer.write("\t\t<render-kit-id>" + renderKitId + "</render-kit-id>\n");
-            writer.write("\t\t<render-kit-class>" + renderKitClass + "</render-kit-class>\n");
-        }
-                		
+		
 		for (Iterator iterator = components.iterator(); iterator.hasNext();) {
 			Component component = (Component) iterator.next();
 			if(component.getRendererType() == null)
@@ -154,22 +134,7 @@ public class FacesConfigMojo extends BaseFacesMojo{
 			writer.write("\t\t\t<renderer-class>" + component.getRendererClass() + "</renderer-class>\n");
 			writer.write("\t\t</renderer>\n");
 		}
-        
-        //Standard Renderers
-        try {
-			File template = new File(project.getBasedir() + File.separator + standardRenderersConfig);
-			FileReader fileReader = new FileReader(template);
-			BufferedReader reader = new BufferedReader(fileReader);
-			String line = null;
-			
-			while((line = reader.readLine()) != null) {
-				writer.write(line);
-				writer.write("\n");
-			}
-		}catch(FileNotFoundException fileNotFoundException) {
-			return;
-		}
-
+		
 		writer.write("\t</render-kit>\n\n");
 	}
 	
