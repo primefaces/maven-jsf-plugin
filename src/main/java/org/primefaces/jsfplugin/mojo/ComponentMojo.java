@@ -120,7 +120,7 @@ public class ComponentMojo extends BaseFacesMojo {
 		writer.write("\tpublic static final String COMPONENT_FAMILY = \"" + component.getComponentFamily() + "\";\n");
 		
 		if(component.getRendererType() != null) {
-			writer.write("\tprivate static final String DEFAULT_RENDERER = \"" + component.getRendererType() + "\";\n");
+			writer.write("\tpublic static final String DEFAULT_RENDERER = \"" + component.getRendererType() + "\";\n");
         }
 				
 		writer.write("\n");
@@ -128,7 +128,7 @@ public class ComponentMojo extends BaseFacesMojo {
 	
 	private void writeAttributesDeclarations(BufferedWriter writer, Component component) throws IOException {
 		boolean firstWritten = false;
-		writer.write("\tprotected enum PropertyKeys {\n");
+		writer.write("\tpublic enum PropertyKeys {\n");
 		
 		for(Iterator<Attribute> attributeIterator = component.getAttributes().iterator(); attributeIterator.hasNext();) {
 			Attribute attribute = attributeIterator.next();
