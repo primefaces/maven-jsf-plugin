@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Iterator;
@@ -67,7 +66,6 @@ public class FaceletsMojo extends BaseFacesMojo{
 	}
 
 	private void writeFaceletsTaglib(List components) throws IOException{
-		FileWriter fileWriter;
 		BufferedWriter writer;
 		String outputPath = project.getBuild().getOutputDirectory() + File.separator + "META-INF";
 		String outputFile =  "primefaces-" + shortName + ".taglib.xml";
@@ -77,8 +75,8 @@ public class FaceletsMojo extends BaseFacesMojo{
             outputDirectory.mkdirs();
         }
 
-		OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(outputPath + File.separator + outputFile), "UTF-8");
-		writer = new BufferedWriter(out);
+		OutputStreamWriter fileWriter = new OutputStreamWriter(new FileOutputStream(outputPath + File.separator + outputFile), "UTF-8");
+		writer = new BufferedWriter(fileWriter);
 
 
 		writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
@@ -155,7 +153,7 @@ public class FaceletsMojo extends BaseFacesMojo{
 		writer.write("</facelet-taglib>\n");
 
 		writer.close();
-		out.close();
+		fileWriter.close();
 	}
 
 	private void writeXSD(BufferedWriter writer) throws IOException {
